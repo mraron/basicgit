@@ -28,7 +28,7 @@ public class Commit {
         sb.append(root.getHash());
         sb.append(this.author);
         sb.append(this.message);
-        sb.append(this.committed.toString());
+        sb.append(this.committed);
         if(this.parent != null) {
             sb.append(this.parent.getHash());
         }

@@ -1,5 +1,5 @@
 public class Blob {
-    public String data;
+    public final String data;
     public final String hash;
 
     public Blob(String data) {
