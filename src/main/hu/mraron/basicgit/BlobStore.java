@@ -1,3 +1,5 @@
+package main.hu.mraron.basicgit;
+
 import java.util.HashMap;
 
 public class BlobStore {

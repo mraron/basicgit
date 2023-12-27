@@ -1,3 +1,5 @@
+package main.hu.mraron.basicgit;
+
 import com.github.difflib.text.DiffRow;
 import com.github.difflib.text.DiffRowGenerator;
 
@@ -21,10 +23,10 @@ public class Tree {
     public String getHash() {
         StringBuilder sb = new StringBuilder();
         for(String name : this.subtrees.keySet()) {
-            sb.append(this.subtrees.get(name).getHash());
+            sb.append(name).append(this.subtrees.get(name).getHash());
         }
         for(String name : this.files.keySet()) {
-            sb.append(this.files.get(name).getHash());
+            sb.append(name).append(this.files.get(name).getHash());
         }
 
         return SHA1.hash(sb.toString());

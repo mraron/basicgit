@@ -1,3 +1,5 @@
+package main.hu.mraron.basicgit;
+
 public class Blob {
     public final String data;
     public final String hash;

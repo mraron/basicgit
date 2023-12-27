@@ -1,3 +1,5 @@
+package main.hu.mraron.basicgit;
+
 import java.util.Date;
 
 public class Commit {

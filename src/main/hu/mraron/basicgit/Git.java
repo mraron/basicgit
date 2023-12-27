@@ -1,3 +1,5 @@
+package main.hu.mraron.basicgit;
+
 import java.util.ArrayList;
 public class Git {
     private final BlobStore blobStore;
