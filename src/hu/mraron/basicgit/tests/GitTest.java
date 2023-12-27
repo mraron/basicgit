@@ -2,6 +2,7 @@ package hu.mraron.basicgit.tests;
 
 import hu.mraron.basicgit.AuthorConfig;
 import hu.mraron.basicgit.Git;
+import hu.mraron.basicgit.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -73,5 +74,16 @@ class GitTest {
         git.setAuthor(new AuthorConfig("asd", "bsd"));
         git.commit("commit4");
         assertEquals(3, git.getCommitsByAuthor(author.name().substring(0, 3)).size());
+    }
+
+    @Test
+    void sameBlob() {
+        Git git = new Git(author);
+        git.add("asd", "123");
+        git.add("csd", "124");
+        git.add("bsd", "123");
+        git.commit("commit");
+        assertSame(git.getLastCommit().root.getFile(new Path("asd")), git.getLastCommit().root.getFile(new Path("bsd")));
+        assertNotSame(git.getLastCommit().root.getFile(new Path("asd")), git.getLastCommit().root.getFile(new Path("csd")));
     }
 }
