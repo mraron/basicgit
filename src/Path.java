@@ -34,4 +34,15 @@ public class Path {
     public String toString() {
         return path;
     }
+
+    @Override
+    public int hashCode() {
+        return path.hashCode();
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) return true;
+        if(this.getClass() != obj.getClass()) return false;
+        return this.path.equals(((Path) obj).path);
+    }
 }

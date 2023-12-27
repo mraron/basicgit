@@ -1,11 +1,11 @@
 import java.util.Date;
 
 public class Commit {
-    private final Tree root;
-    private final String author;
-    private final String message;
-    private final Date committed;
-    private final Commit parent;
+    public final Tree root;
+    public final String author;
+    public final String message;
+    public final Date committed;
+    public final Commit parent;
 
     public Commit(Tree root, String author, String message, Commit parent, Date committed) {
         this.root = root;

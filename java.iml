@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="commons.codec" level="project" />
+    <orderEntry type="library" name="io.github.java.diff.utils" level="project" />
   </component>
 </module>

@@ -1,6 +1,8 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeMap;
+import com.github.difflib.text.DiffRow;
+import com.github.difflib.text.DiffRowGenerator;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Tree {
     private final TreeMap<String, Tree> subtrees;
@@ -73,7 +75,7 @@ public class Tree {
             throw new BlobNotFoundException("tree not found: " + path.getTopDirName());
         }
 
-        Tree newTree = copy.removeFileAndCopy(path.getRemainingPath());
+        Tree newTree = copy.subtrees.get(path.getTopDirName()).removeFileAndCopy(path.getRemainingPath());
         copy.subtrees.put(path.getTopDirName(), newTree);
         return copy;
     }
@@ -89,6 +91,45 @@ public class Tree {
             result.add(new Path(file));
         }
         return result;
+    }
+
+    public String generateDiff(Tree newTree) {
+       DiffRowGenerator generator = DiffRowGenerator.create()
+               .showInlineDiffs(true)
+               .inlineDiffByWord(true)
+               .mergeOriginalRevised(true)
+               .oldTag(starts -> (starts?"\u001B[31m":"\u001B[0m"))
+               .newTag(starts -> (starts?"\u001B[32m":"\u001B[0m"))
+               .lineNormalizer(s -> s)
+               .build();
+
+        HashSet<Path> allFiles = new HashSet<>();
+        allFiles.addAll(getFiles());
+        allFiles.addAll(newTree.getFiles());
+        StringBuilder sb = new StringBuilder();
+        for(Path p : allFiles) {
+            Blob oldBlob = getFile(p), newBlob = newTree.getFile(p);
+            if(oldBlob == newBlob) {
+                continue ;
+            }
+
+            sb.append("File: ").append(p);
+            String[] oldContent = (oldBlob == null ? new String[]{} : oldBlob.data.split("\n"));
+            String[] newContent = (newBlob == null ? new String[]{} : newBlob.data.split("\n"));
+
+            if(newBlob == null) {
+               sb.append(" was deleted\n\n");
+            }else {
+                sb.append("\n").append(
+                       generator.generateDiffRows(
+                               Arrays.stream(oldContent).toList(),
+                               Arrays.stream(newContent).toList()
+                       ).stream().map(DiffRow::getOldLine).collect(Collectors.joining("\n"))
+                ).append("\n\n");
+           }
+       }
+
+       return sb.toString();
     }
 
 }
