@@ -27,7 +27,7 @@ public class Tree {
         return SHA1.hash(sb.toString());
     }
 
-    public Tree addBlob(String path, Blob blob) {
+    public Tree addBlobAndCopy(String path, Blob blob) {
         Tree copy = new Tree(this);
         if(!path.contains(Character.toString(PATH_SEPARATOR))) {
             copy.files.put(path, blob);
@@ -41,7 +41,7 @@ public class Tree {
             copy.subtrees.put(dirName, new Tree());
         }
 
-        return copy.subtrees.get(dirName).addBlob(remPath, blob);
+        return copy.subtrees.get(dirName).addBlobAndCopy(remPath, blob);
     }
 
     public Blob getBlob(String path) {
@@ -62,7 +62,7 @@ public class Tree {
 
         return this.subtrees.get(dirName).getBlob(remPath);
     }
-    public Tree removeBlob(String path) throws BlobNotFoundException {
+    public Tree removeBlobAndCopy(String path) throws BlobNotFoundException {
         Tree copy = new Tree(this);
         if(!path.contains(Character.toString(PATH_SEPARATOR))) {
             if(copy.files.containsKey(path)) {
@@ -80,6 +80,6 @@ public class Tree {
             throw new BlobNotFoundException("tree not found: " + dirName);
         }
 
-        return copy.removeBlob(remPath);
+        return copy.removeBlobAndCopy(remPath);
     }
 }
