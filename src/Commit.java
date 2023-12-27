@@ -7,13 +7,13 @@ public class Commit {
     private final Date committed;
     private final Commit parent;
 
-    public Commit(Tree root, String author, String message, Commit parent) {
+    public Commit(Tree root, String author, String message, Commit parent, Date committed) {
         this.root = root;
         this.author = author;
         this.message = message;
         this.parent = parent;
 
-        this.committed = new Date();
+        this.committed = committed == null ? new Date() : committed;
     }
     @Override
     public String toString() {

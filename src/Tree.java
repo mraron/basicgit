@@ -1,7 +1,8 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 public class Tree {
-    public static char PATH_SEPARATOR = '/';
     private final TreeMap<String, Tree> subtrees;
     private final TreeMap<String, Blob> files;
 
@@ -27,59 +28,67 @@ public class Tree {
         return SHA1.hash(sb.toString());
     }
 
-    public Tree addBlobAndCopy(String path, Blob blob) {
+    public Tree addFileAndCopy(Path path, Blob blob) {
         Tree copy = new Tree(this);
-        if(!path.contains(Character.toString(PATH_SEPARATOR))) {
-            copy.files.put(path, blob);
+        if(path.isFile()) {
+            copy.files.put(path.toString(), blob);
             return copy;
         }
 
-        int sepIndex = path.indexOf(PATH_SEPARATOR);
-        String dirName = path.substring(0, sepIndex), remPath = path.substring(sepIndex+1);
-
-        if(!copy.subtrees.containsKey(dirName)) {
-            copy.subtrees.put(dirName, new Tree());
+        if(!copy.subtrees.containsKey(path.getTopDirName())) {
+            copy.subtrees.put(path.getTopDirName(), new Tree());
         }
 
-        return copy.subtrees.get(dirName).addBlobAndCopy(remPath, blob);
+        Tree newTree = copy.subtrees.get(path.getTopDirName()).addFileAndCopy(path.getRemainingPath(), blob);
+        copy.subtrees.put(path.getTopDirName(), newTree);
+        return copy;
     }
-
-    public Blob getBlob(String path) {
-        if (!path.contains(Character.toString(PATH_SEPARATOR))) {
-            if(this.files.containsKey(path)) {
-                return this.files.get(path);
+    public Blob getFile(Path path) {
+        if (path.isFile()) {
+            if(this.files.containsKey(path.toString())) {
+                return this.files.get(path.toString());
             }
 
             return null;
         }
 
-        int sepIndex = path.indexOf(PATH_SEPARATOR);
-        String dirName = path.substring(0, sepIndex), remPath = path.substring(sepIndex+1);
-
-        if(!this.subtrees.containsKey(dirName)) {
+        if(!this.subtrees.containsKey(path.getTopDirName())) {
             return null;
         }
 
-        return this.subtrees.get(dirName).getBlob(remPath);
+        return this.subtrees.get(path.getTopDirName()).getFile(path.getRemainingPath());
     }
-    public Tree removeBlobAndCopy(String path) throws BlobNotFoundException {
+    public Tree removeFileAndCopy(Path path) throws BlobNotFoundException {
         Tree copy = new Tree(this);
-        if(!path.contains(Character.toString(PATH_SEPARATOR))) {
-            if(copy.files.containsKey(path)) {
-                copy.files.remove(path);
+        if(path.isFile()) {
+            if(copy.files.containsKey(path.toString())) {
+                copy.files.remove(path.toString());
                 return copy;
             }
 
             throw new BlobNotFoundException("file not found: " + path);
         }
 
-        int sepIndex = path.indexOf(PATH_SEPARATOR);
-        String dirName = path.substring(0, sepIndex), remPath = path.substring(sepIndex+1);
-
-        if(!copy.subtrees.containsKey(dirName)) {
-            throw new BlobNotFoundException("tree not found: " + dirName);
+        if(!copy.subtrees.containsKey(path.getTopDirName())) {
+            throw new BlobNotFoundException("tree not found: " + path.getTopDirName());
         }
 
-        return copy.removeBlobAndCopy(remPath);
+        Tree newTree = copy.removeFileAndCopy(path.getRemainingPath());
+        copy.subtrees.put(path.getTopDirName(), newTree);
+        return copy;
     }
+
+    public List<Path> getFiles() {
+        List<Path> result = new ArrayList<>();
+        for(String dir : subtrees.keySet()) {
+            for(Path path : subtrees.get(dir).getFiles()) {
+                result.add(new Path(dir, path));
+            }
+        }
+        for(String file : files.keySet()) {
+            result.add(new Path(file));
+        }
+        return result;
+    }
+
 }
