@@ -1,6 +1,9 @@
-package tests.hu.mraron.basicgit;
+package hu.mraron.basicgit.tests;
 
-import main.hu.mraron.basicgit.*;
+import hu.mraron.basicgit.Blob;
+import hu.mraron.basicgit.BlobNotFoundException;
+import hu.mraron.basicgit.Path;
+import hu.mraron.basicgit.Tree;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,9 +88,7 @@ class TreeTest {
 
     @Test
     void removeFileAndCopy() {
-        assertThrows(BlobNotFoundException.class, () -> {
-            this.tree.removeFileAndCopy(new Path("teszt.x"));
-        });
+        assertThrows(BlobNotFoundException.class, () -> this.tree.removeFileAndCopy(new Path("teszt.x")));
 
         this.tree = this.tree.addFileAndCopy(new Path("a"), new Blob("a"));
         this.tree = this.tree.addFileAndCopy(new Path("b"), new Blob("b"));
@@ -103,9 +104,7 @@ class TreeTest {
         assertDoesNotThrow(() -> {
             this.tree = this.tree.removeFileAndCopy(new Path("b"));
         });
-        assertThrows(BlobNotFoundException.class, () -> {
-            this.tree = this.tree.removeFileAndCopy(new Path("b"));
-        });
+        assertThrows(BlobNotFoundException.class, () -> this.tree = this.tree.removeFileAndCopy(new Path("b")));
 
         assertDoesNotThrow(() -> {
             this.tree.removeFileAndCopy(new Path("a"));

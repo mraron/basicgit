@@ -1,4 +1,4 @@
-package main.hu.mraron.basicgit;
+package hu.mraron.basicgit;
 
 import java.util.HashMap;
 

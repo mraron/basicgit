@@ -1,4 +1,4 @@
-package main.hu.mraron.basicgit;
+package hu.mraron.basicgit;
 
 public record AuthorConfig(String name, String email) {
     @Override

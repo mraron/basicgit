@@ -1,4 +1,4 @@
-package main.hu.mraron.basicgit;
+package hu.mraron.basicgit;
 
 import com.github.difflib.text.DiffRow;
 import com.github.difflib.text.DiffRowGenerator;

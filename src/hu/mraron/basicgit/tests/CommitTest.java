@@ -1,6 +1,9 @@
-package tests.hu.mraron.basicgit;
+package hu.mraron.basicgit.tests;
 
-import main.hu.mraron.basicgit.*;
+import hu.mraron.basicgit.Blob;
+import hu.mraron.basicgit.Commit;
+import hu.mraron.basicgit.Path;
+import hu.mraron.basicgit.Tree;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;

@@ -1,4 +1,4 @@
-package main.hu.mraron.basicgit;
+package hu.mraron.basicgit;
 
 public class Path {
     public static char PATH_SEPARATOR = '/';

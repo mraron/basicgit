@@ -1,7 +1,7 @@
-package tests.hu.mraron.basicgit;
+package hu.mraron.basicgit.tests;
 
-import main.hu.mraron.basicgit.AuthorConfig;
-import main.hu.mraron.basicgit.Git;
+import hu.mraron.basicgit.AuthorConfig;
+import hu.mraron.basicgit.Git;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

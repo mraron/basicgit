@@ -1,4 +1,4 @@
-package main.hu.mraron.basicgit;
+package hu.mraron.basicgit;
 
 public class Blob {
     public final String data;

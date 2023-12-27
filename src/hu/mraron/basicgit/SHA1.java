@@ -1,4 +1,4 @@
-package main.hu.mraron.basicgit;
+package hu.mraron.basicgit;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
