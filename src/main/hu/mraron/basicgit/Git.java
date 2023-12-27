@@ -1,6 +1,8 @@
 package main.hu.mraron.basicgit;
 
 import java.util.ArrayList;
+import java.util.Date;
+
 public class Git {
     private final BlobStore blobStore;
     private Tree workingDirectory;
@@ -31,7 +33,11 @@ public class Git {
     }
 
     public void commit(String message) {
-        Commit commit = new Commit(workingDirectory, author.toString(), message, getLastCommit(), null);
+        commit(message, null);
+    }
+
+    public void commit(String message, Date date) {
+        Commit commit = new Commit(workingDirectory, author.toString(), message, getLastCommit(), date);
         commits.add(commit);
     }
 

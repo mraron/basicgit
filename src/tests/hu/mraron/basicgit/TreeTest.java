@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TreeTest {
     private Tree tree;
-    @org.junit.jupiter.api.Test
+    @Test
     void getHash() {
         Tree one = new Tree(), other = new Tree();
 
@@ -54,7 +54,7 @@ class TreeTest {
     void init() {
         this.tree = new Tree();
     }
-    @org.junit.jupiter.api.Test
+    @Test
     void testGetAndAddFile() {
         this.tree.addFileAndCopy(new Path("teszt.x"), new Blob("asd"));
         assertTrue(this.tree.getFiles().isEmpty());
@@ -75,7 +75,7 @@ class TreeTest {
         assertEquals(blob.data, "csd");
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void testChangingFile() {
         this.tree = this.tree.addFileAndCopy(new Path("file_to_change"), new Blob("old stuff"));
         assertEquals("old stuff", this.tree.getFile(new Path("file_to_change")).data);
@@ -83,7 +83,7 @@ class TreeTest {
         assertEquals("new stuff", this.tree.getFile(new Path("file_to_change")).data);
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void removeFileAndCopy() {
         assertThrows(BlobNotFoundException.class, () -> {
             this.tree.removeFileAndCopy(new Path("teszt.x"));
@@ -134,7 +134,7 @@ class TreeTest {
         assertEquals(5, this.tree.getFiles().size());
     }
 
-    @org.junit.jupiter.api.Test
+    @Test
     void getFiles() {
         this.tree = this.tree.addFileAndCopy(new Path("a"), new Blob("a"));
         this.tree = this.tree.addFileAndCopy(new Path("a/b"), new Blob("b"));
