@@ -2,17 +2,22 @@ package hu.mraron.basicgit;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Git {
     private final BlobStore blobStore;
     private Tree workingDirectory;
     private final ArrayList<Commit> commits;
     private AuthorConfig author;
-
+    private final HashMap<String, Commit> branches;
+    private String currentBranch;
+    public static final String DEFAULT_BRANCH = "master";
     public Git(AuthorConfig defaultAuthor) {
         this.blobStore = new BlobStore();
         this.workingDirectory = new Tree();
         this.commits = new ArrayList<>();
+        this.currentBranch = Git.DEFAULT_BRANCH;
+        this.branches = new HashMap<>();
 
         this.setAuthor(defaultAuthor);
     }
@@ -39,13 +44,36 @@ public class Git {
     public void commit(String message, Date date) {
         Commit commit = new Commit(workingDirectory, author.toString(), message, getLastCommit(), date);
         commits.add(commit);
+
+        switchBranch(this.currentBranch, commit);
+    }
+
+    public String getBranch() {
+        return this.currentBranch;
+    }
+
+    public void switchBranch(String name) {
+        if(branches.containsKey(name)) {
+            switchBranch(name, branches.get(name));
+        }else {
+            switchBranch(name, getLastCommit());
+        }
+    }
+
+    public void switchBranch(String name, Commit commit) {
+        this.currentBranch = name;
+
+        if(commit != null) {
+            this.workingDirectory = commit.root;
+        }
+        branches.put(name, commit);
     }
 
     public Commit getLastCommit() {
-        if(commits.isEmpty()) {
+        if(!branches.containsKey(currentBranch)) {
             return null;
         }
-        return commits.getLast();
+        return branches.get(currentBranch);
     }
 
     public Commit getCommitByHash(String hash) {
