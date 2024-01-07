@@ -3,6 +3,7 @@ package hu.mraron.basicgit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Git {
     private final BlobStore blobStore;
@@ -100,7 +101,21 @@ public class Git {
     public String log() {
         StringBuilder sb = new StringBuilder();
         for(Commit c : commits.reversed()) {
-            sb.append(c.toString());
+            ArrayList<String> branches = new ArrayList<>();
+            for(String branch : this.branches.keySet()) {
+                if(this.branches.get(branch) == c) {
+                    if(!Objects.equals(branch, currentBranch)) {
+                        branches.add(branch);
+                    }else {
+                        branches.add("HEAD -> "+branch);
+                    }
+                }
+            }
+            if(branches.isEmpty()) {
+                sb.append(c.toStringWithMessage(""));
+            }else {
+                sb.append(c.toStringWithMessage(" (" + String.join(", ", branches) + ")"));
+            }
         }
         return sb.toString();
     }

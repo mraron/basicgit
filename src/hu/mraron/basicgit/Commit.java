@@ -19,7 +19,11 @@ public class Commit {
     }
     @Override
     public String toString() {
-        return "commit " + getHash() + "\n" +
+        return toStringWithMessage("");
+    }
+
+    public String toStringWithMessage(String message) {
+        return "commit " + getHash() + message + "\n" +
                 "Author:\t" + this.author + "\n" +
                 "Date:\t" + this.committed + "\n" +
                 "\n\t" + this.message + "\n\n";

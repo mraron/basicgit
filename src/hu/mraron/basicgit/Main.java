@@ -31,6 +31,7 @@ public class Main {
                     """);
         }catch (Exception ignored) {}
         git.commit("remove hello.cpp", date3);
+        git.switchBranch("anotherBranch1");
 
         System.out.println(git.log());
         System.out.println(git.listFiles());
@@ -43,6 +44,7 @@ public class Main {
         System.out.println(git.status());
         git.setAuthor(new AuthorConfig("Interesting Author", "interesting@author.dev"));
         git.commit("Interesting message", date4);
+        git.switchBranch("anotherBranch2");
 
         System.out.println(git.log());
     }
