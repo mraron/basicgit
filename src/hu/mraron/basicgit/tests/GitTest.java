@@ -170,38 +170,6 @@ class GitBranchTest extends BaseGitTest {
     }
 
     @Test
-    void divergeFromPastCommits() {
-        Git git = new Git(author);
-        git.commit("init");
-        Commit initCommit = git.getLastCommit();
-
-        ArrayList<String> listParents = new ArrayList<>(), listDivergences = new ArrayList<>();
-        listParents.add(git.getLastCommit().getHash());
-        for(int i = 1; i <= 10; i++) {
-            git.switchBranch("branch" + i);
-            git.commit("commit" + i);
-            listParents.add(git.getLastCommit().getHash());
-        }
-
-        for(int i = 1; i <= 10; i++) {
-            git.switchBranch("branch" + i);
-            git.commit("divergence" + i);
-            listDivergences.add(git.getLastCommit().getHash());
-        }
-
-        for(int i = 1; i <= 10; i++) {
-            Commit current = git.getCommitByHash(listDivergences.get(i-1));
-            for(int j = 0; j < i+1; j++) {
-                current = current.parent;
-                if(j == 0) {
-                    assertEquals(current, git.getCommitByHash(listParents.get(i)));
-                }
-            }
-            assertEquals(current, initCommit);
-        }
-    }
-
-    @Test
     void workingDirectoryIsEmptied() {
         Git git = new Git(author);
         git.commit("init");
@@ -246,5 +214,80 @@ class GitBranchTest extends BaseGitTest {
         git.commit("add b");
         assertDoesNotThrow(() -> git.getLastCommit().root.getFile("a"));
         assertEquals(git.getLastCommit().root.getFile("b").data, "b");
+    }
+}
+
+class GitDivergentBranchesTest extends BaseGitTest {
+    public ArrayList<String> listParents;
+    public ArrayList<String> listDivergences;
+    public Commit initCommit;
+    public Git git;
+
+    @BeforeEach
+    void initialize() {
+        git = new Git(author);
+        git.commit("init");
+
+        initCommit = git.getLastCommit();
+
+        listParents = new ArrayList<>();
+        listDivergences = new ArrayList<>();
+
+        listParents.add(git.getLastCommit().getHash());
+        for(int i = 1; i <= 10; i++) {
+            git.switchBranch("branch" + i);
+            git.add("file", "curr"+i);
+            git.commit("commit" + i);
+            listParents.add(git.getLastCommit().getHash());
+        }
+
+        for(int i = 1; i <= 10; i++) {
+            git.switchBranch("branch" + i);
+            git.add("divergent_file", "curr"+i);
+            git.commit("divergence" + i);
+            listDivergences.add(git.getLastCommit().getHash());
+        }
+    }
+    @Test
+    void commitTree() {
+        for(int i = 1; i <= 10; i++) {
+            Commit current = git.getCommitByHash(listDivergences.get(i-1));
+            for(int j = 0; j < i+1; j++) {
+                current = current.parent;
+                if(j == 0) {
+                    assertEquals(current, git.getCommitByHash(listParents.get(i)));
+                }
+            }
+            assertEquals(current, initCommit);
+        }
+    }
+    @Test
+    void mergeFastForward10() {
+        git.switchBranch("toFastForward", git.getCommitByHash(listParents.get(1)));
+        assertDoesNotThrow(() -> git.merge("branch10"));
+        assertEquals(git.getBranch(), "toFastForward");
+        assertEquals(git.getLastCommit().getHash(), listDivergences.getLast());
+        assertEquals(git.getLastCommit().root.getFile("divergent_file").data, "curr10");
+        assertEquals(git.getLastCommit().root.getFile("file").data, "curr10");
+    }
+    @Test
+    void mergeFastForward5() {
+        git.switchBranch("toFastForward", git.getCommitByHash(listParents.get(1)));
+        assertDoesNotThrow(() -> git.merge("branch5"));
+    }
+    @Test
+    void mergeDivergentCommitDivergent1() {
+        git.switchBranch("toFastForward", git.getCommitByHash(listParents.get(5)));
+        assertThrows(CanNotMergeException.class, () -> git.merge(git.getCommitByHash(listDivergences.getFirst())));
+    }
+    @Test
+    void mergeDivergentBranchDivergent1() {
+        git.switchBranch("divergence", git.getCommitByHash(listDivergences.getFirst()));
+        git.switchBranch("toFastForward", git.getCommitByHash(listParents.get(5)));
+        assertThrows(CanNotMergeException.class, () -> git.merge("divergence"));
+
+        git.switchBranch("divergence", git.getCommitByHash(listParents.get(5)));
+        git.switchBranch("toFastForward", git.getCommitByHash(listDivergences.getFirst()));
+        assertThrows(CanNotMergeException.class, () -> git.merge("divergence"));
     }
 }

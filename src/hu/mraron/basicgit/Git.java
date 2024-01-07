@@ -70,6 +70,31 @@ public class Git {
         branches.put(name, commit);
     }
 
+    public void merge(String branch) throws CanNotMergeException {
+        if(!branches.containsKey(branch)) {
+            throw new IllegalArgumentException();
+        }
+        merge(branches.get(branch));
+    }
+
+    public void merge(Commit commit) throws CanNotMergeException {
+        if(commit == null) {
+            throw new IllegalArgumentException();
+        }
+
+        Commit currentCommit = commit;
+        ArrayList<Commit> parentCommits = new ArrayList<>();
+        while (currentCommit != null) {
+            parentCommits.add(currentCommit);
+            currentCommit = currentCommit.parent;
+        }
+
+        if(!parentCommits.contains(this.getLastCommit())) {
+            throw new CanNotMergeException("can't fast-forward to "+commit.getHash().substring(0,6)+": divergent branches");
+        }
+        switchBranch(this.currentBranch, commit);
+    }
+
     public Commit getLastCommit() {
         if(!branches.containsKey(currentBranch)) {
             return null;
