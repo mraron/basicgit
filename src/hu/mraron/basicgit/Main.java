@@ -47,5 +47,12 @@ public class Main {
         git.switchBranch("anotherBranch2");
 
         System.out.println(git.log());
+
+        System.out.println("fast-forward master:");
+        git.switchBranch("master");
+        try {
+            git.merge("anotherBranch2");
+        }catch(Exception ignored) {}
+        System.out.println(git.log());
     }
 }
