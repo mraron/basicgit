@@ -47,6 +47,9 @@ public class Tree {
         copy.subtrees.put(path.getTopDirName(), newTree);
         return copy;
     }
+    public Blob getFile(String path) {
+        return getFile(new Path(path));
+    }
     public Blob getFile(Path path) {
         if (path.isFile()) {
             if(this.files.containsKey(path.toString())) {

@@ -1,9 +1,6 @@
 package hu.mraron.basicgit.tests;
 
-import hu.mraron.basicgit.AuthorConfig;
-import hu.mraron.basicgit.Commit;
-import hu.mraron.basicgit.Git;
-import hu.mraron.basicgit.Path;
+import hu.mraron.basicgit.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -86,8 +83,8 @@ class GitTest extends BaseGitTest {
         git.add("csd", "124");
         git.add("bsd", "123");
         git.commit("commit");
-        assertSame(git.getLastCommit().root.getFile(new Path("asd")), git.getLastCommit().root.getFile(new Path("bsd")));
-        assertNotSame(git.getLastCommit().root.getFile(new Path("asd")), git.getLastCommit().root.getFile(new Path("csd")));
+        assertSame(git.getLastCommit().root.getFile("asd"), git.getLastCommit().root.getFile("bsd"));
+        assertNotSame(git.getLastCommit().root.getFile("asd"), git.getLastCommit().root.getFile("csd"));
     }
 }
 
@@ -211,7 +208,7 @@ class GitBranchTest extends BaseGitTest {
         git.add("test_file", "test_contents");
         git.switchBranch("test");
         git.commit("test_commit");
-        assertNull(git.getLastCommit().root.getFile(new Path("test_file")));
+        assertNull(git.getLastCommit().root.getFile("test_file"));
     }
     @Test
     void divergentContents() {
@@ -227,7 +224,27 @@ class GitBranchTest extends BaseGitTest {
         git.commit("commit2");
         Commit c2 = git.getLastCommit();
 
-        assertEquals(c1.root.getFile(new Path("a")).data, "a");
-        assertEquals(c2.root.getFile(new Path("a")).data, "b");
+        assertEquals(c1.root.getFile("a").data, "a");
+        assertEquals(c2.root.getFile("a").data, "b");
+    }
+
+    @Test
+    void divergentExistenceOfFile() {
+        Git git = new Git(author);
+        git.commit("init");
+        git.add("a", "a");
+        git.commit("Add a");
+        git.switchBranch("otherBranch");
+
+        git.switchBranch(Git.DEFAULT_BRANCH);
+        assertDoesNotThrow(() -> git.remove("a"));
+        git.commit("Remove a");
+        assertNull(git.getLastCommit().root.getFile("a"));
+
+        git.switchBranch("otherBranch");
+        git.add("b", "b");
+        git.commit("add b");
+        assertDoesNotThrow(() -> git.getLastCommit().root.getFile("a"));
+        assertEquals(git.getLastCommit().root.getFile("b").data, "b");
     }
 }

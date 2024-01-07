@@ -63,27 +63,27 @@ class TreeTest {
         assertTrue(this.tree.getFiles().isEmpty());
 
         this.tree = this.tree.addFileAndCopy(new Path("teszt.x"), new Blob("asd"));
-        Blob blob = this.tree.getFile(new Path("teszt.x"));
+        Blob blob = this.tree.getFile("teszt.x");
         assertEquals(blob.data, "asd");
 
         this.tree = this.tree.addFileAndCopy(new Path("teszt.y"), new Blob("bsd"));
-        blob = this.tree.getFile(new Path("teszt.y"));
+        blob = this.tree.getFile("teszt.y");
         assertEquals(blob.data, "bsd");
 
         // maybe unexpected that this works
         this.tree = this.tree.addFileAndCopy(new Path("teszt.x/ccc"), new Blob("csd"));
-        blob = this.tree.getFile(new Path("teszt.x"));
+        blob = this.tree.getFile("teszt.x");
         assertEquals(blob.data, "asd");
-        blob = this.tree.getFile(new Path("teszt.x/ccc"));
+        blob = this.tree.getFile("teszt.x/ccc");
         assertEquals(blob.data, "csd");
     }
 
     @Test
     void testChangingFile() {
         this.tree = this.tree.addFileAndCopy(new Path("file_to_change"), new Blob("old stuff"));
-        assertEquals("old stuff", this.tree.getFile(new Path("file_to_change")).data);
+        assertEquals("old stuff", this.tree.getFile("file_to_change").data);
         this.tree = this.tree.addFileAndCopy(new Path("file_to_change"), new Blob("new stuff"));
-        assertEquals("new stuff", this.tree.getFile(new Path("file_to_change")).data);
+        assertEquals("new stuff", this.tree.getFile("file_to_change").data);
     }
 
     @Test
